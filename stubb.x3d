@@ -15,8 +15,26 @@ and load libraries commonly used in the VR laboratory.
 
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
 
-
-  <!-- Put your code here -->
+ <!-- Put your code here -->                                                                                       
+  <Viewpoint
+      description="View 0"
+      centerOfRotation="0 0 0"
+      position="0 0 0"
+      orientation="1 0 0 0"
+      fieldOfView="1"
+      jump="true"
+      retainUserOffsets="false"
+      />                                                                                                            
+<!--                                                                                                                
+  <Viewpoint                                                                                                        
+      description='View 1'                                                                                          
+      centerOfRotation='0 0 0'                                                                                      
+      position='0 0 0.6'                                                                                            
+      orientation='1 0 0 0'                                                                                         
+      fieldOfView='1.57'                                                                                            
+      jump='true'                                                                                                   
+      retainUserOffsets='false' />                                                                                  
+-->
 
     <Transform DEF="Seat" scale="0.6 0.6 0.6" rotation="0.6 -0.8 0 0.5" translation="0 0 -2">
       <Shape>
