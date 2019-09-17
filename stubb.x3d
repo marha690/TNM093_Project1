@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <!--
 
 Copyright 2013, 2017, Karljohan Lundin Palmerius
@@ -11,15 +10,16 @@ navigation to allow for viewpoint calibration and tracking,
 and load libraries commonly used in the VR laboratory.
 
 -->
+
 <Group>
 
   <!-- Includes-->
   <!-- <Inline url="urn:candy:x3d/view-untracked-stereo.x3d"/> -->
   
   <PythonScript url="urn:candy:python/CorrectViewpoint.py"/>
-
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
 
+  <PythonScript DEF="Converter" url="urn:candy:python/MFtoSFBool.py"/>
 
   <!-- Put your code here -->
   <Viewpoint
@@ -46,39 +46,54 @@ and load libraries commonly used in the VR laboratory.
       screenUpperRight="0.24 0.15 0"
       position="-0.4 0.4 1"
       screenUp="0 1 0"
-  />
+      />
 
-  <Transform DEF="Seat" scale="0.1 0.1 0.1" rotation="0 0 0 0" translation="0 0 0">
+  <DirectionalLight direction="0.3 -1 0"/>
+  
+  <Transform DEF="Floor" translation="0 -0.2 0" rotation="1 0 0 0.4">
+    <Shape>
+      
+      <Box size="1 0.1 1"/>
+      <Appearance shadow="true" ><Material diffuseColor="1 1 1"/>
+      <ImageTexture url='"texture2.jpg"'/>
+      <FrictionalSurface useRelativeValues="false" stiffness="1200" staticFriction="0.4" damping="5" dynamicFriction="0.2"/>
+      </Appearance>
+    </Shape>
+  </Transform>
+  
+  <Transform DEF="Chair" scale="0.1 0.1 0.1" rotation="0 0 0 0" translation="0 0 0">
     <Shape>
       <Box size="1 0.2 1"/>
-      <Appearance><Material diffuseColor="0.3 0 0.8"/></Appearance>
+      <Appearance shadow ="true"><Material diffuseColor="0.3 0 0.8"/>
+      <FrictionalSurface useRelativeValues="false" stiffness="50" staticFriction="0.2" damping="1" dynamicFriction="0.2"/>
+      </Appearance>
     </Shape>
 
     <Transform DEF="Back" rotation="0.5 0 0 1.5" translation="0 0.5 -0.8">
       <Shape>
 	<Box size="1 0.2 1.3"/>
-	<Appearance><Material diffuseColor="0.3 0.2 0"/></Appearance>
+	<Appearance shadow="true"><Material diffuseColor="0.3 0.2 0"/></Appearance>
       </Shape>
     </Transform>
 
     <Transform DEF="leg" translation="0.3 -0.7 0.2">
       <Shape>
 	<Box size="0.2 1 0.2"/>
-	<Appearance><Material diffuseColor="0.3 1 0"/></Appearance>
+	<Appearance shadow="true"><Material diffuseColor="0.3 1 0"/></Appearance>
       </Shape>
     </Transform>
 
     <Transform DEF="leg2" translation="0.3 -0.7 -1 ">
       <Shape>
 	<Box size="0.2 1 0.2"/>
-	<Appearance><Material diffuseColor="0.3 1 0"/></Appearance>
+	<Appearance shadow="true"><Material diffuseColor="0.3 1 0"/></Appearance>
       </Shape>
     </Transform>
 
     <Transform DEF="leg3" translation="-0.4 -0.7 -1">
       <Shape>
 	<Box size="0.2 1 0.2"/>
-	<Appearance><Material diffuseColor="0.3 1 0"/></Appearance>
+	<Appearance shadow="true"><Material diffuseColor="0.3 1 0"/></Appearance>
       </Shape>
     </Transform>
 
@@ -86,7 +101,7 @@ and load libraries commonly used in the VR laboratory.
     <Transform DEF="leg4" translation="-0.4 -0.7 0.2">
       <Shape>
 	<Box size="0.2 1 0.2"/>
-	<Appearance><Material diffuseColor="0.3 1 0"/></Appearance>
+	<Appearance shadow="true"><Material diffuseColor="0.3 1 0"/></Appearance>
       </Shape>
     </Transform>
 
@@ -95,13 +110,17 @@ and load libraries commonly used in the VR laboratory.
 
   <MatrixTransform DEF="TR" >
  <!-- <Transform DEF="Kenny" translation="0 0 0">-->
-    <Shape>
-      <Sphere radius="0.05"/>
-      <Appearance><Material diffuseColor="1 0 0"/></Appearance>
-    </Shape>
+ 
+ <Shape>
+      <Sphere DEF="Kenny" radius="0.05"/>
+      <Appearance shadow="true"><Material diffuseColor="1 0 0"/>
+      <ImageTexture url='"texture1.jpg"' />
+      <FrictionalSurface useRelativeValues="false" stiffness="200" staticFriction="0.4" damping="5" dynamicFriction="0.2"/>
+      </Appearance>
+  </Shape>
  <!-- </Transform>-->
   </MatrixTransform>
-
+  
   <!-- Scripts -->
   <IMPORT inlineDEF="H3D_EXPORTS" exportedDEF="HDEV" AS="HDEV"/>
   
@@ -109,11 +128,25 @@ and load libraries commonly used in the VR laboratory.
       DEF="MT"
       url="urn:candy:python/ManualTranslation.py">
     <Transform USE="TR" containerField="references"/>
-    </PythonScript>
+  </PythonScript>
+
+  <Sound spatialize="true">
+    <AudioClip DEF="handclap" description="clap" url="sound/handclap.wav"/>
+  </Sound>
+
+  <BooleanFilter DEF="Filter"/>
+  <TimeTrigger DEF="Trigger"/>
+  
 
   <ROUTE fromNode="HDEV" fromField="mainButton"
          toNode="MT" toField="button"/>
   <ROUTE fromNode="HDEV" fromField="trackerPosition"
          toNode="MT" toField="position"/>
+
+  <ROUTE fromNode="Kenny" fromField="isTouched"
+	 toNode="Converter" toField="value"/>
+
+    <ROUTE fromNode="Floor" fromField="isTouched"
+	 toNode="Converter" toField="value"/>
 
 </Group>
