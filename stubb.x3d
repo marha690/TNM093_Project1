@@ -14,15 +14,15 @@ and load libraries commonly used in the VR laboratory.
 <Group>
 
   <!-- Includes-->
-  <!-- <Inline url="urn:candy:x3d/view-untracked-stereo.x3d"/> -->
   
   <PythonScript url="urn:candy:python/CorrectViewpoint.py"/>
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
 
   <PythonScript DEF="Converter" url="urn:candy:python/MFtoSFBool.py"/>
+  <PythonScript DEF="Converter1" url="urn:candy:python/MFtoSFBool.py"/>
 
   <!-- Put your code here -->
-  <Viewpoint
+<!--   <Viewpoint
       description="View 0"
       centerOfRotation="0 0 0"
       position="0 0 0.5"
@@ -46,9 +46,15 @@ and load libraries commonly used in the VR laboratory.
       screenUpperRight="0.24 0.15 0"
       position="-0.4 0.4 1"
       screenUp="0 1 0"
-      />
+      /> -->
 
   <DirectionalLight direction="0.3 -1 0"/>
+  
+  	<!-- Testa dessa var och en enskilt i VR-studion. -->
+	<!--<Inline url="urn:candy:x3d/view-untracked-stereo.x3d"/> -->
+	<!--<Inline url="urn:candy:x3d/view-untracked-mono.x3d"/>-->
+	<!--<Inline url="urn:candy:x3d/view-head-tracked-stereo.x3d"/>-->
+	<!--<Inline url="urn:candy:x3d/view-head-tracked-mono.x3d"/>-->
   
   <Transform DEF="Floor" translation="0 -0.2 0" rotation="1 0 0 0">
     <Shape>
@@ -74,10 +80,10 @@ and load libraries commonly used in the VR laboratory.
 
     <Transform DEF="Floor" translation="0 -0.2 0" rotation="1 0 0 0">
     <Shape>
-      
-      <Box size="0.7 0.12 0.3"/>
-      <Appearance shadow="true" ><Material diffuseColor="1 1 1"/>
-      <ImageTexture url='"rug_perry.jpg"'/>
+
+      <Box DEF="rug_perry" size="0.7 0.12 0.3"/>
+      <Appearance shadow="false" ><Material diffuseColor="1 1 1"/>
+            <ImageTexture url='"rug_perry.jpg"'/>
       <FrictionalSurface DEF="rug" useRelativeValues="false" stiffness="800" staticFriction="0.4" damping="4" dynamicFriction="0.2"/>
       </Appearance>
     </Shape>
@@ -88,7 +94,7 @@ and load libraries commonly used in the VR laboratory.
     <Transform translation="0 -0.16 -0.2">
       <Shape>
      <Box size="1 0.08 1"/>
-     <Appearance shadow ="true"><Material diffuseColor="0.3 0 0.8"/>
+     <Appearance shadow ="false"><Material diffuseColor="0.3 0 0.8"/>
       <ImageTexture url='"chair_leather.jpg"'/>
       <FrictionalSurface useRelativeValues="false" stiffness="50" staticFriction="0.2" damping="1" dynamicFriction="0.2"/>
       </Appearance>
@@ -99,7 +105,7 @@ and load libraries commonly used in the VR laboratory.
     <Transform rotation="0.5 0 0 1.5" translation="0 0.5 -0.8">
       <Shape>
 	<Box size="1 0.2 1.3"/>
-	<Appearance shadow ="true"><Material diffuseColor="0.3 0 0.8"/>
+	<Appearance shadow ="false"><Material diffuseColor="0.3 0 0.8"/>
 	<ImageTexture url='"chair_leather.jpg"'/>
         <FrictionalSurface useRelativeValues="false" stiffness="50" staticFriction="0.2" damping="1" dynamicFriction="0.2"/>
         </Appearance>
@@ -109,7 +115,7 @@ and load libraries commonly used in the VR laboratory.
     <Transform translation="0.4 -0.7 0.2">
       <Shape DEF="leg">
 	<Box size="0.15 1 0.15"/>
-	<Appearance shadow ="true"><Material diffuseColor="0.3 0 0.8"/>
+	<Appearance shadow ="false"><Material diffuseColor="0.3 0 0.8"/>
 	<ImageTexture url='"chair_silver.jpg"'/>
         <FrictionalSurface useRelativeValues="false" stiffness="50" staticFriction="0.2" damping="1" dynamicFriction="0.2"/>
         </Appearance>
@@ -153,25 +159,45 @@ and load libraries commonly used in the VR laboratory.
       DEF="MT"
       url="urn:candy:python/ManualTranslation.py">
     <Transform USE="TR" containerField="references"/>
-  </PythonScript>
+    </PythonScript>
+    
+	  <VRSound intensity="0.1" DEF="pokeJap" spatialize="true">
+    <AudioClip DEF="pokeEng" description="pokeEng" url="pokemonOriginal.wav"/>
+    <ReverbSoundEffect parametersPreset = 'ROOM'/>
+  </VRSound>
 
-  <Sound spatialize="true">
-    <AudioClip DEF="handclap" description="clap" url="sound/handclap.wav"/>
-  </Sound>
+  
+  <VRSound intensity="0.1" location='0.5 0 10' DEF="pokeJap" spatialize="true">
+    <AudioClip DEF="pokeJap" description="pokeJapan" url="pokemonJapan.wav"/>
+    <ReverbSoundEffect parametersPreset = 'CHAPEL'/>
+  </VRSound>
+
 
   <BooleanFilter DEF="Filter"/>
   <TimeTrigger DEF="Trigger"/>
+
+  <BooleanFilter DEF="Filter1"/>
+  <TimeTrigger DEF="Trigger1"/>
   
 
+  
   <ROUTE fromNode="HDEV" fromField="mainButton"
          toNode="MT" toField="button"/>
   <ROUTE fromNode="HDEV" fromField="trackerPosition"
          toNode="MT" toField="position"/>
 
-  <ROUTE fromNode="Kenny" fromField="isTouched"
+  <ROUTE fromNode="pokeball_kenny" fromField="isTouched"
 	 toNode="Converter" toField="value"/>
 
-    <!--<ROUTE fromNode="Floor" fromField="isTouched"
-	 toNode="Converter" toField="value"/>-->
+  <ROUTE fromNode="Converter" fromField="value"
+	 toNode="Filter" toField="set_boolean"/>
+  
+  <ROUTE fromNode="Filter" fromField = "inputTrue"
+	 toNode="Trigger" toField="set_boolean" />
+
+  <ROUTE fromNode = "Trigger" fromField = "triggerTime"
+	 toNode = "pokeJap" toField = "startTime" />
+
+
 
 </Group>
