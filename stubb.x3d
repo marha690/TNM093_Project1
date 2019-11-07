@@ -13,15 +13,11 @@ and load libraries commonly used in the VR laboratory.
 
 <Group>
 
-  <!-- Includes-->
-  
   <PythonScript url="urn:candy:python/CorrectViewpoint.py"/>
   <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
 
-  <PythonScript DEF="Converter" url="urn:candy:python/MFtoSFBool.py"/>
-  <PythonScript DEF="Converter1" url="urn:candy:python/MFtoSFBool.py"/>
 
-  <!-- Put your code here -->
+  <!-- Viewpoints, disable when in VR lab -->
 <!--   <Viewpoint
       description="View 0"
       centerOfRotation="0 0 0"
@@ -48,14 +44,21 @@ and load libraries commonly used in the VR laboratory.
       screenUp="0 1 0"
       /> -->
 
-  <DirectionalLight direction="0.3 -1 0"/>
+
+	<!-- Light source -->
+	<DirectionalLight direction="0.3 -1 0"/>
   
   	<!-- Testa dessa var och en enskilt i VR-studion. -->
-	<!--<Inline url="urn:candy:x3d/view-untracked-stereo.x3d"/> -->
+	<!-- Monoscopic, everything appears at about the same distance
+		 Stereoscopic gives more depth perception -->
+		 
+	<!--<Inline url="urn:candy:x3d/view-untracked-stereo.x3d"/>-->
 	<!--<Inline url="urn:candy:x3d/view-untracked-mono.x3d"/>-->
 	<!--<Inline url="urn:candy:x3d/view-head-tracked-stereo.x3d"/>-->
 	<!--<Inline url="urn:candy:x3d/view-head-tracked-mono.x3d"/>-->
   
+  
+  <!--- Geometry -->
   <Transform DEF="Floor" translation="0 -0.2 0" rotation="1 0 0 0">
     <Shape>
       
@@ -80,11 +83,11 @@ and load libraries commonly used in the VR laboratory.
 
     <Transform DEF="Floor" translation="0 -0.2 0" rotation="1 0 0 0">
     <Shape>
-
+      
       <Box DEF="rug_perry" size="0.7 0.12 0.3"/>
-      <Appearance shadow="false" ><Material diffuseColor="1 1 1"/>
-            <ImageTexture url='"rug_perry.jpg"'/>
-      <FrictionalSurface DEF="rug" useRelativeValues="false" stiffness="800" staticFriction="0.4" damping="4" dynamicFriction="0.2"/>
+      <Appearance shadow="true" ><Material diffuseColor="1 1 1"/>
+      <ImageTexture url='"rug_perry.jpg"'/>
+      <FrictionalSurface DEF="rug" useRelativeValues="false" stiffness="800" staticFriction="0.7" damping="4" dynamicFriction="0.2"/>
       </Appearance>
     </Shape>
   </Transform>
@@ -94,7 +97,7 @@ and load libraries commonly used in the VR laboratory.
     <Transform translation="0 -0.16 -0.2">
       <Shape>
      <Box size="1 0.08 1"/>
-     <Appearance shadow ="false"><Material diffuseColor="0.3 0 0.8"/>
+     <Appearance shadow ="true"><Material diffuseColor="0.3 0 0.8"/>
       <ImageTexture url='"chair_leather.jpg"'/>
       <FrictionalSurface useRelativeValues="false" stiffness="50" staticFriction="0.2" damping="1" dynamicFriction="0.2"/>
       </Appearance>
@@ -105,7 +108,7 @@ and load libraries commonly used in the VR laboratory.
     <Transform rotation="0.5 0 0 1.5" translation="0 0.5 -0.8">
       <Shape>
 	<Box size="1 0.2 1.3"/>
-	<Appearance shadow ="false"><Material diffuseColor="0.3 0 0.8"/>
+	<Appearance shadow ="true"><Material diffuseColor="0.3 0 0.8"/>
 	<ImageTexture url='"chair_leather.jpg"'/>
         <FrictionalSurface useRelativeValues="false" stiffness="50" staticFriction="0.2" damping="1" dynamicFriction="0.2"/>
         </Appearance>
@@ -115,9 +118,9 @@ and load libraries commonly used in the VR laboratory.
     <Transform translation="0.4 -0.7 0.2">
       <Shape DEF="leg">
 	<Box size="0.15 1 0.15"/>
-	<Appearance shadow ="false"><Material diffuseColor="0.3 0 0.8"/>
+	<Appearance shadow ="true"><Material diffuseColor="0.3 0 0.8" specularColor="0.3 0.3 0.3"/>
 	<ImageTexture url='"chair_silver.jpg"'/>
-        <FrictionalSurface useRelativeValues="false" stiffness="50" staticFriction="0.2" damping="1" dynamicFriction="0.2"/>
+        <FrictionalSurface useRelativeValues="false" stiffness="300" staticFriction="0.3" damping="1" dynamicFriction="0.2"/>
         </Appearance>
       </Shape>
     </Transform>
@@ -152,52 +155,65 @@ and load libraries commonly used in the VR laboratory.
   </Transform>
   </MatrixTransform>
   
+    
+  
   <!-- Scripts -->
   <IMPORT inlineDEF="H3D_EXPORTS" exportedDEF="HDEV" AS="HDEV"/>
   
-    <PythonScript
+	<PythonScript
       DEF="MT"
       url="urn:candy:python/ManualTranslation.py">
     <Transform USE="TR" containerField="references"/>
     </PythonScript>
-    
-	  <VRSound intensity="0.1" DEF="pokeJap" spatialize="true">
-    <AudioClip DEF="pokeEng" description="pokeEng" url="pokemonOriginal.wav"/>
-    <ReverbSoundEffect parametersPreset = 'ROOM'/>
-  </VRSound>
-
-  
-  <VRSound intensity="0.1" location='0.5 0 10' DEF="pokeJap" spatialize="true">
-    <AudioClip DEF="pokeJap" description="pokeJapan" url="pokemonJapan.wav"/>
-    <ReverbSoundEffect parametersPreset = 'CHAPEL'/>
-  </VRSound>
-
-
-  <BooleanFilter DEF="Filter"/>
-  <TimeTrigger DEF="Trigger"/>
-
-  <BooleanFilter DEF="Filter1"/>
-  <TimeTrigger DEF="Trigger1"/>
-  
-
-  
-  <ROUTE fromNode="HDEV" fromField="mainButton"
+ 
+   <ROUTE fromNode="HDEV" fromField="mainButton"
          toNode="MT" toField="button"/>
   <ROUTE fromNode="HDEV" fromField="trackerPosition"
          toNode="MT" toField="position"/>
+  
+  
+  <!-- Sound routes -->
+  <PythonScript DEF="MFtoSF" url="urn:candy:python/MFtoSFBool.py"/>
+  <PythonScript DEF="MFtoSF2" url="urn:candy:python/MFtoSFBool.py"/>
+  <PythonScript url="urn:candy:python/AutoLoadSO.py"/>
+  <BooleanFilter DEF="Filter"/>
+  <BooleanFilter DEF="Filter1"/>
+  <TimeTrigger DEF="Trigger"/>
+  <TimeTrigger DEF="Trigger1"/>
+  
+  
+  <!-- background sound -->
+  <VRSound intensity="0.15" DEF="pokeJap" spatialize="true">
+    <AudioClip DEF="pokeJap" url="sound/pokemonOriginal.wav" loop="true"/>
+	<ReverbSoundEffect parametersPreset = 'CHAPEL'/>
+  </VRSound>
+
+	<!-- Interactive sound -->
+  <VRSound intensity="1" DEF="pikatchu" location="1 0 1" spatialize="true">
+    <AudioClip DEF="pikatchu" url="sound/pika.wav"/>
+  </VRSound>
+  
+  <VRSound intensity="1" DEF="rug" location="-1 -1 0" spatialize="true">
+    <AudioClip DEF="rug" url="sound/rugTalk.wav"/>
+  </VRSound>
+	
 
   <ROUTE fromNode="pokeball_kenny" fromField="isTouched"
-	 toNode="Converter" toField="value"/>
-
-  <ROUTE fromNode="Converter" fromField="value"
+	 toNode="MFtoSF" toField="value"/>
+  <ROUTE fromNode="MFtoSF" fromField="value"
 	 toNode="Filter" toField="set_boolean"/>
-  
   <ROUTE fromNode="Filter" fromField = "inputTrue"
 	 toNode="Trigger" toField="set_boolean" />
-
   <ROUTE fromNode = "Trigger" fromField = "triggerTime"
-	 toNode = "pokeJap" toField = "startTime" />
+	 toNode = "pikatchu" toField = "startTime" />
 
-
+  <ROUTE fromNode="rug_perry" fromField="isTouched"
+	 toNode="MFtoSF2" toField="value"/>
+  <ROUTE fromNode="MFtoSF2" fromField="value"
+	 toNode="Filter1" toField="set_boolean"/>
+  <ROUTE fromNode="Filter1" fromField = "inputTrue"
+	 toNode="Trigger1" toField="set_boolean" />
+  <ROUTE fromNode = "Trigger1" fromField = "triggerTime"
+	 toNode = "rug" toField = "startTime" />
 
 </Group>
